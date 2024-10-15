@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Animation/AnimInstance.h"
+#include "Components/AudioComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "Engine/World.h"
 
@@ -23,6 +24,12 @@ UTP_WeaponComponent::UTP_WeaponComponent()
 
 void UTP_WeaponComponent::Fire()
 {
+	if (Heat >= 1)
+	{
+		StopFire();
+	}
+	Heat += FireRate / MaxFireTime;
+
 	if (Character == nullptr || Character->GetController() == nullptr)
 	{
 		return;
@@ -36,24 +43,13 @@ void UTP_WeaponComponent::Fire()
 		{
 			APlayerController* PlayerController = Cast<APlayerController>(Character->GetController());
 			const FRotator SpawnRotation = PlayerController->PlayerCameraManager->GetCameraRotation();
-			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-			const FVector SpawnLocation = GetOwner()->GetActorLocation() + SpawnRotation.RotateVector(MuzzleOffset);
-	
-			//Set Spawn Collision Handling Override
-			FActorSpawnParameters ActorSpawnParams;
-			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-	
-			// Spawn the projectile at the muzzle
-			World->SpawnActor<AAnomalyProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
+			const FVector SpawnLocation = PlayerController->PlayerCameraManager->GetCameraLocation() + SpawnRotation.
+				Vector() * 100;
+
+			World->SpawnActor<AAnomalyProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
 		}
 	}
-	
-	// Try and play the sound if specified
-	if (FireSound != nullptr)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, FireSound, Character->GetActorLocation());
-	}
-	
+
 	// Try and play a firing animation if specified
 	if (FireAnimation != nullptr)
 	{
@@ -64,6 +60,24 @@ void UTP_WeaponComponent::Fire()
 			AnimInstance->Montage_Play(FireAnimation, 1.f);
 		}
 	}
+}
+
+void UTP_WeaponComponent::StartFire()
+{
+	if (Heat > 0.8)
+	{
+		return;
+	}
+	bIsFiring = true;
+	FireAudioComponent->Play();
+	GetWorld()->GetTimerManager().SetTimer(FireTimerHandle, this, &UTP_WeaponComponent::Fire, FireRate, true, 0.0f);
+}
+
+void UTP_WeaponComponent::StopFire()
+{
+	bIsFiring = false;
+	FireAudioComponent->Stop();
+	GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
 }
 
 bool UTP_WeaponComponent::AttachWeapon(AAnomalyCharacter* TargetCharacter)
@@ -86,16 +100,21 @@ bool UTP_WeaponComponent::AttachWeapon(AAnomalyCharacter* TargetCharacter)
 	// Set up action bindings
 	if (APlayerController* PlayerController = Cast<APlayerController>(Character->GetController()))
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
+			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			// Set the priority of the mapping to 1, so that it overrides the Jump action with the Fire action when using touch input
 			Subsystem->AddMappingContext(FireMappingContext, 1);
 		}
 
-		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerController->InputComponent))
+		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(
+			PlayerController->InputComponent))
 		{
 			// Fire
-			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &UTP_WeaponComponent::Fire);
+			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this,
+			                                   &UTP_WeaponComponent::StartFire);
+			EnhancedInputComponent->BindAction(StopFireAction, ETriggerEvent::Completed, this,
+			                                   &UTP_WeaponComponent::StopFire);
 		}
 	}
 
@@ -111,9 +130,34 @@ void UTP_WeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 	if (APlayerController* PlayerController = Cast<APlayerController>(Character->GetController()))
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
+			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->RemoveMappingContext(FireMappingContext);
 		}
 	}
+}
+
+void UTP_WeaponComponent::BeginPlay()
+{
+	Super::BeginPlay();
+	FireAudioComponent = NewObject<UAudioComponent>(this, UAudioComponent::StaticClass());
+	FireAudioComponent->AttachToComponent(this, FAttachmentTransformRules::KeepRelativeTransform);
+	FireAudioComponent->SetSound(FireSound);
+}
+
+void UTP_WeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+                                        FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (bIsFiring)
+	{
+		Heat += DeltaTime / MaxFireTime;
+	}
+	else if (Heat > 0)
+	{
+		Heat -= DeltaTime / MaxCoolingTime;
+	}
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Red, FString::Printf(TEXT("Heat: %f"), Heat));
 }

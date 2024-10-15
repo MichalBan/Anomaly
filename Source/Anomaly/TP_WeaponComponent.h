@@ -8,7 +8,7 @@
 
 class AAnomalyCharacter;
 
-UCLASS(Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class ANOMALY_API UTP_WeaponComponent : public USkeletalMeshComponent
 {
 	GENERATED_BODY()
@@ -21,7 +21,7 @@ public:
 	/** Sound to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
 	USoundBase* FireSound;
-	
+
 	/** AnimMontage to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	UAnimMontage* FireAnimation;
@@ -37,6 +37,8 @@ public:
 	/** Fire Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	class UInputAction* FireAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	const UInputAction* StopFireAction;
 
 	/** Sets default values for this component's properties */
 	UTP_WeaponComponent();
@@ -48,13 +50,30 @@ public:
 	/** Make the weapon Fire a Projectile */
 	UFUNCTION(BlueprintCallable, Category="Weapon")
 	void Fire();
+	UFUNCTION()
+	void StartFire();
+	UFUNCTION()
+	void StopFire();
 
 protected:
 	/** Ends gameplay for this component. */
 	UFUNCTION()
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void BeginPlay() override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
+	FTimerHandle FireTimerHandle;
 	/** The Character holding this weapon*/
+	UPROPERTY()
 	AAnomalyCharacter* Character;
+	UPROPERTY()
+	UAudioComponent* FireAudioComponent;
+	float Heat = 0;
+	bool bIsFiring = false;
+
+	const float FireRate = 0.05f;
+	const float MaxFireTime = 3.0f;
+	const float MaxCoolingTime = 5.0f;
 };
