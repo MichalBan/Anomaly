@@ -28,7 +28,6 @@ void UTP_WeaponComponent::Fire()
 	{
 		StopFire();
 	}
-	Heat += FireRate / MaxFireTime;
 
 	if (Character == nullptr || Character->GetController() == nullptr)
 	{
@@ -42,10 +41,16 @@ void UTP_WeaponComponent::Fire()
 		if (World != nullptr)
 		{
 			APlayerController* PlayerController = Cast<APlayerController>(Character->GetController());
-			const FRotator SpawnRotation = PlayerController->PlayerCameraManager->GetCameraRotation();
-			const FVector SpawnLocation = PlayerController->PlayerCameraManager->GetCameraLocation() + SpawnRotation.
-				Vector() * 100;
-
+			FVector CameraLocation = PlayerController->PlayerCameraManager->GetCameraLocation();
+			const FRotator CameraRotation = PlayerController->PlayerCameraManager->GetCameraRotation();
+			FHitResult HitResult;
+			GetWorld()->LineTraceSingleByChannel(HitResult, CameraLocation,
+			                                     CameraLocation + CameraRotation.Vector() * 3000, ECC_Visibility);
+			FVector Target = HitResult.bBlockingHit
+				                 ? HitResult.ImpactPoint
+				                 : CameraLocation + CameraRotation.Vector() * 3000;
+			FVector SpawnLocation = GetComponentLocation() + CameraRotation.Vector() * 60;
+			FRotator SpawnRotation = (Target - SpawnLocation).Rotation();
 			World->SpawnActor<AAnomalyProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
 		}
 	}
@@ -80,6 +85,17 @@ void UTP_WeaponComponent::StopFire()
 	GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
 }
 
+void UTP_WeaponComponent::SetupHeatCylinder(UStaticMeshComponent* InHeatCylinder)
+{
+	HeatCylinder = InHeatCylinder;
+	UMaterialInterface* Material = HeatCylinder->GetMaterial(0);
+	UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(Material, nullptr);
+	HeatCylinder->SetMaterial(0, DynamicMaterial);
+	FLinearColor CurrentColor;
+	DynamicMaterial->GetVectorParameterValue(TEXT("DiffuseColor"), CurrentColor);
+	MaxColor = CurrentColor;
+}
+
 bool UTP_WeaponComponent::AttachWeapon(AAnomalyCharacter* TargetCharacter)
 {
 	Character = TargetCharacter;
@@ -90,9 +106,9 @@ bool UTP_WeaponComponent::AttachWeapon(AAnomalyCharacter* TargetCharacter)
 		return false;
 	}
 
-	// Attach the weapon to the First Person Character
-	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
-	AttachToComponent(Character->GetMesh1P(), AttachmentRules, FName(TEXT("GripPoint")));
+	//// Attach the weapon to the First Person Character
+	//FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
+	//AttachToComponent(Character->GetMesh1P(), AttachmentRules, FName(TEXT("GripPoint")));
 
 	// add the weapon as an instance component to the character
 	Character->AddInstanceComponent(this);
@@ -153,11 +169,30 @@ void UTP_WeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 	if (bIsFiring)
 	{
-		Heat += DeltaTime / MaxFireTime;
+		Heat += DeltaTime * HeatingRate;
 	}
 	else if (Heat > 0)
 	{
-		Heat -= DeltaTime / MaxCoolingTime;
+		Heat -= DeltaTime * CoolingRate;
 	}
-	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Red, FString::Printf(TEXT("Heat: %f"), Heat));
+
+	if (Heat > 1)
+	{
+		Heat = 1;
+	}
+	else if (Heat < 0)
+	{
+		Heat = 0;
+	}
+
+	if (HeatCylinder)
+	{
+		auto Material = Cast<UMaterialInstanceDynamic>(HeatCylinder->GetMaterial(0));
+		FLinearColor CurrentColor;
+		Material->GetVectorParameterValue(TEXT("DiffuseColor"), CurrentColor);
+		CurrentColor.R = MinColor.R + MaxColor.R * Heat * HeatColorFactor;
+		CurrentColor.G = MinColor.G + MaxColor.G * Heat * HeatColorFactor;
+		CurrentColor.B = MinColor.B + MaxColor.B * Heat * HeatColorFactor;
+		Material->SetVectorParameterValue(TEXT("DiffuseColor"), CurrentColor);
+	}
 }

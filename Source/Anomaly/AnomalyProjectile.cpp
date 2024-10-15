@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "AnomalyProjectile.h"
+
+#include "AnomalyActor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
 
@@ -34,5 +36,9 @@ AAnomalyProjectile::AAnomalyProjectile()
 void AAnomalyProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                                FVector NormalImpulse, const FHitResult& Hit)
 {
+	if(OtherActor && OtherActor->IsA(AAnomalyActor::StaticClass()))
+	{
+		Cast<AAnomalyActor>(OtherActor)->TakeHit();
+	}
 	Destroy();
 }

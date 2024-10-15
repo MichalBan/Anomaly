@@ -54,6 +54,8 @@ public:
 	void StartFire();
 	UFUNCTION()
 	void StopFire();
+	UFUNCTION(BlueprintCallable)
+	void SetupHeatCylinder(UStaticMeshComponent* InHeatCylinder);
 
 protected:
 	/** Ends gameplay for this component. */
@@ -70,10 +72,15 @@ private:
 	AAnomalyCharacter* Character;
 	UPROPERTY()
 	UAudioComponent* FireAudioComponent;
+	UPROPERTY()
+	UStaticMeshComponent* HeatCylinder;
 	float Heat = 0;
+	FLinearColor MaxColor;
 	bool bIsFiring = false;
 
-	const float FireRate = 0.05f;
-	const float MaxFireTime = 3.0f;
-	const float MaxCoolingTime = 5.0f;
+	const float FireRate = 0.1f;
+	const float HeatingRate = 0.3f;
+	const float CoolingRate = 0.2f;
+	const float HeatColorFactor = 0.2f;
+	const FLinearColor MinColor = FLinearColor(.01, .01, .01);
 };

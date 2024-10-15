@@ -13,6 +13,9 @@ class AAnomalyGameMode : public AGameModeBase
 
 public:
 	AAnomalyGameMode();
+
+private:
+	virtual void BeginPlay() override;
 };
 
 

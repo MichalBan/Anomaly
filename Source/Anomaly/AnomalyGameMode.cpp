@@ -12,3 +12,13 @@ AAnomalyGameMode::AAnomalyGameMode()
 	DefaultPawnClass = PlayerPawnClassFinder.Class;
 
 }
+
+void AAnomalyGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	IConsoleVariable* CVar = IConsoleManager::Get().FindConsoleVariable(TEXT("t.MaxFPS"));
+	CVar->Set(165);
+	CVar = IConsoleManager::Get().FindConsoleVariable(TEXT("r.VSync"));
+	CVar->Set(1);
+}
