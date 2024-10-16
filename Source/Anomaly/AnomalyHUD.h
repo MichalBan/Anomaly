@@ -17,6 +17,7 @@ class ANOMALY_API AAnomalyHUD : public AHUD
 
 public:
 	virtual void BeginPlay() override;
+	UHUDWidget* GetHUDWidget() const;
 
 private:
 	UPROPERTY()

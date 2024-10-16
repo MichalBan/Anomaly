@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "AnomalyCharacter.h"
+
+#include "AnomalyHUD.h"
 #include "AnomalyProjectile.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
@@ -42,6 +44,8 @@ void AAnomalyCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+
+	Sanity = 1.0f;
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -66,6 +70,39 @@ void AAnomalyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	}
 }
 
+void AAnomalyCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (Sanity <= 0)
+	{
+		AddActorLocalOffset(DeltaTime * FVector(5, 10, -30));
+	}
+}
+
+
+void AAnomalyCharacter::ChangeSanity(float DeltaSanity)
+{
+	Sanity += DeltaSanity;
+	AAnomalyHUD* HUD = Cast<AAnomalyHUD>(Cast<APlayerController>(GetController())->GetHUD());
+	HUD->GetHUDWidget()->SetSanityPercent(Sanity);
+	if (Sanity <= 0)
+	{
+		GetController()->InputComponent->bBlockInput = true;
+		Weapon->StopFire();
+		HUD->GetHUDWidget()->BuildSummaryText(ClearedAnomalies);
+		FTimerHandle Timer;
+		GetWorldTimerManager().SetTimer(Timer, [this]
+		{
+			UGameplayStatics::OpenLevel(GetWorld(), "/Game/StarterContent/Maps/Minimal_Default");
+		}, 5.0f, false);
+	}
+}
+
+void AAnomalyCharacter::IncrementClearedAnomalies()
+{
+	++ClearedAnomalies;
+}
 
 void AAnomalyCharacter::Move(const FInputActionValue& Value)
 {

@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/ProgressBar.h"
+#include "Components/TextBlock.h"
 #include "HUDWidget.generated.h"
 
 /**
@@ -14,4 +16,13 @@ class ANOMALY_API UHUDWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
+	void SetSanityPercent(float Percent);
+	void BuildSummaryText(int NumAnomalies);
+
+private:
+	UPROPERTY(meta=(BindWidget))
+	UProgressBar* ProgressBar_Sanity;
+	UPROPERTY(meta=(BindWidget))
+	UTextBlock* Text_Summary;
 };

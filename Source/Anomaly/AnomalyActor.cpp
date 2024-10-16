@@ -3,6 +3,7 @@
 
 #include "AnomalyActor.h"
 
+#include "AnomalyCharacter.h"
 #include "Components/AudioComponent.h"
 
 // Sets default values
@@ -24,6 +25,7 @@ void AAnomalyActor::TakeHit()
 	{
 		bClear = true;
 		AudioComponent->SetSound(ClearSound);
+		Cast<AAnomalyCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn())->IncrementClearedAnomalies();
 		Clear();
 	}
 }

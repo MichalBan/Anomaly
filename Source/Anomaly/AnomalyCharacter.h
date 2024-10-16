@@ -30,6 +30,9 @@ public:
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+	UFUNCTION(BlueprintCallable)
+	void ChangeSanity(float DeltaSanity);
+	void IncrementClearedAnomalies();
 
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -45,6 +48,7 @@ protected:
 	virtual void BeginPlay() override;
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
+	virtual void Tick(float DeltaTime) override;
 	// End of APawn interface
 	UPROPERTY(BlueprintReadWrite)
 	UTP_WeaponComponent* Weapon;
@@ -70,6 +74,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	USoundBase* FootstepSound;
 
+	float Sanity = 1.0f;
+	int ClearedAnomalies = 0;
 	FTimerHandle FootstepTimer;
 	const float FootstepRate = 0.5f;
 };

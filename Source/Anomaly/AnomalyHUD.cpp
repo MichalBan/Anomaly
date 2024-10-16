@@ -10,3 +10,8 @@ void AAnomalyHUD::BeginPlay()
 	HUDWidget = CreateWidget<UHUDWidget>(GetWorld(), HUDWidgetClass);
 	HUDWidget->AddToViewport();
 }
+
+UHUDWidget* AAnomalyHUD::GetHUDWidget() const
+{
+	return HUDWidget;
+}
