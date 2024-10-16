@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AnomalyAudioComponent.h"
 #include "TP_WeaponComponent.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
@@ -41,12 +42,14 @@ protected:
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 
-	virtual void BeginPlay();
+	virtual void BeginPlay() override;
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 	// End of APawn interface
 	UPROPERTY(BlueprintReadWrite)
 	UTP_WeaponComponent* Weapon;
+	UPROPERTY(BlueprintReadWrite)
+	UAnomalyAudioComponent* AudioComponent;
 
 private:
 	/** Pawn mesh: 1st person view (arms; seen only by self) */
@@ -64,4 +67,9 @@ private:
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
+	UPROPERTY(EditAnywhere)
+	USoundBase* FootstepSound;
+
+	FTimerHandle FootstepTimer;
+	const float FootstepRate = 0.5f;
 };

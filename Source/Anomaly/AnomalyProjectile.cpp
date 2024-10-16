@@ -36,9 +36,13 @@ AAnomalyProjectile::AAnomalyProjectile()
 void AAnomalyProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                                FVector NormalImpulse, const FHitResult& Hit)
 {
-	if(OtherActor && OtherActor->IsA(AAnomalyActor::StaticClass()))
+	if (OtherActor && OtherActor->IsA(AAnomalyActor::StaticClass()))
 	{
 		Cast<AAnomalyActor>(OtherActor)->TakeHit();
+	}
+	else if (OtherActor && OtherActor->GetOwner() && OtherActor->GetOwner()->IsA(AAnomalyActor::StaticClass()))
+	{
+		Cast<AAnomalyActor>(OtherActor->GetOwner())->TakeHit();
 	}
 	Destroy();
 }

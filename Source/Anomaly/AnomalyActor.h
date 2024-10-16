@@ -15,13 +15,23 @@ public:
 	AAnomalyActor();
 
 	void TakeHit();
+	UFUNCTION(BlueprintNativeEvent)
+	void SetObject(AStaticMeshActor* Object);
+
 protected:
 	UFUNCTION(BlueprintNativeEvent)
 	void Clear();
 	UPROPERTY(EditAnywhere)
 	int Health;
+	UPROPERTY(EditAnywhere)
+	USoundBase* Sound;
+	UPROPERTY(EditAnywhere)
+	USoundBase* ClearSound;
+	UPROPERTY()
+	UAudioComponent* AudioComponent;
 	bool bClear;
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+	virtual void Destroyed() override;
 };

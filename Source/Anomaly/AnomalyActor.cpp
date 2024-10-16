@@ -3,6 +3,8 @@
 
 #include "AnomalyActor.h"
 
+#include "Components/AudioComponent.h"
+
 // Sets default values
 AAnomalyActor::AAnomalyActor()
 {
@@ -21,8 +23,14 @@ void AAnomalyActor::TakeHit()
 	if (Health <= 0)
 	{
 		bClear = true;
+		AudioComponent->SetSound(ClearSound);
 		Clear();
 	}
+}
+
+void AAnomalyActor::SetObject_Implementation(AStaticMeshActor* Object)
+{
+	// Do nothing
 }
 
 void AAnomalyActor::Clear_Implementation()
@@ -34,10 +42,27 @@ void AAnomalyActor::Clear_Implementation()
 void AAnomalyActor::BeginPlay()
 {
 	Super::BeginPlay();
+	if (Sound)
+	{
+		AudioComponent = NewObject<UAudioComponent>(this, UAudioComponent::StaticClass());
+		AudioComponent->SetWorldLocation(GetActorLocation() + FVector(0, 0, 100));
+		AudioComponent->SetSound(Sound);
+		AudioComponent->Play();
+	}
 }
 
 // Called every frame
 void AAnomalyActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AAnomalyActor::Destroyed()
+{
+	if (AudioComponent)
+	{
+		AudioComponent->Stop();
+		AudioComponent->DestroyComponent();
+	}
+	Super::Destroyed();
 }

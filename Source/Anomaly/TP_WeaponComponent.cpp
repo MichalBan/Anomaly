@@ -190,9 +190,17 @@ void UTP_WeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 		auto Material = Cast<UMaterialInstanceDynamic>(HeatCylinder->GetMaterial(0));
 		FLinearColor CurrentColor;
 		Material->GetVectorParameterValue(TEXT("DiffuseColor"), CurrentColor);
-		CurrentColor.R = MinColor.R + MaxColor.R * Heat * HeatColorFactor;
-		CurrentColor.G = MinColor.G + MaxColor.G * Heat * HeatColorFactor;
-		CurrentColor.B = MinColor.B + MaxColor.B * Heat * HeatColorFactor;
+		if (Heat < 0.5)
+		{
+			CurrentColor = MinColor;
+		}
+		else
+		{
+			float HeatColor = (Heat - 0.5) * HeatColorFactor;
+			CurrentColor.R = MinColor.R + MaxColor.R * HeatColor;
+			CurrentColor.G = MinColor.G + MaxColor.G * HeatColor;
+			CurrentColor.B = MinColor.B + MaxColor.B * HeatColor;
+		}
 		Material->SetVectorParameterValue(TEXT("DiffuseColor"), CurrentColor);
 	}
 }

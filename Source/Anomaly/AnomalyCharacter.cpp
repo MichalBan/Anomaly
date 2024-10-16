@@ -10,6 +10,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
+#include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -50,10 +51,6 @@ void AAnomalyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAnomalyCharacter::Move);
 
@@ -80,6 +77,12 @@ void AAnomalyCharacter::Move(const FInputActionValue& Value)
 		// add movement 
 		AddMovementInput(GetActorForwardVector(), MovementVector.Y);
 		AddMovementInput(GetActorRightVector(), MovementVector.X);
+
+		if (!GetWorldTimerManager().IsTimerActive(FootstepTimer))
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), FootstepSound, GetActorLocation());
+			GetWorldTimerManager().SetTimer(FootstepTimer, FootstepRate, false);
+		}
 	}
 }
 
