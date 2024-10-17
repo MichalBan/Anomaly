@@ -27,7 +27,7 @@ protected:
 	USoundBase* Sound;
 	UPROPERTY(EditAnywhere)
 	USoundBase* ClearSound;
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	UAudioComponent* AudioComponent;
 	bool bClear;
 

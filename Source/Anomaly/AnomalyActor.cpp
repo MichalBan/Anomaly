@@ -24,8 +24,14 @@ void AAnomalyActor::TakeHit()
 	if (Health <= 0)
 	{
 		bClear = true;
-		AudioComponent->SetSound(ClearSound);
-		Cast<AAnomalyCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn())->IncrementClearedAnomalies();
+		if (ClearSound)
+		{
+			AudioComponent->SetSound(ClearSound);
+		}
+		else
+		{
+			AudioComponent->Stop();
+		}
 		Clear();
 	}
 }

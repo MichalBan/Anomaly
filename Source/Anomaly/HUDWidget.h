@@ -19,9 +19,12 @@ class ANOMALY_API UHUDWidget : public UUserWidget
 	
 public:
 	void SetSanityPercent(float Percent);
-	void BuildSummaryText(int NumAnomalies);
+	void SetTime(int InSeconds);
+	void BuildSummaryText(bool bWin);
 
 private:
+	UPROPERTY(meta=(BindWidget))
+	UTextBlock* Text_Time;
 	UPROPERTY(meta=(BindWidget))
 	UProgressBar* ProgressBar_Sanity;
 	UPROPERTY(meta=(BindWidget))

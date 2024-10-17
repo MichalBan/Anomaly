@@ -33,7 +33,6 @@ public:
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 	UFUNCTION(BlueprintCallable)
 	void ChangeSanity(float DeltaSanity);
-	void IncrementClearedAnomalies();
 
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -79,7 +78,6 @@ private:
 	USoundBase* FootstepSound;
 
 	float Sanity = 1.0f;
-	int ClearedAnomalies = 0;
 	FTimerHandle FootstepTimer;
 	const float FootstepRate = 0.5f;
 };

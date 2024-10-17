@@ -92,7 +92,6 @@ void AAnomalyCharacter::Tick(float DeltaTime)
 
 void AAnomalyCharacter::Die()
 {
-	AAnomalyHUD* HUD = Cast<AAnomalyHUD>(Cast<APlayerController>(GetController())->GetHUD());
 	GetController()->InputComponent->bBlockInput = true;
 	if (Weapon)
 	{
@@ -102,7 +101,7 @@ void AAnomalyCharacter::Die()
 	{
 		Flashlight->DestroyComponent();
 	}
-	HUD->GetHUDWidget()->BuildSummaryText(ClearedAnomalies);
+	Cast<AAnomalyHUD>(Cast<APlayerController>(GetController())->GetHUD())->GetHUDWidget()->BuildSummaryText(false);
 	SetActorEnableCollision(false);
 	GetCapsuleComponent()->SetEnableGravity(false);
 
@@ -116,17 +115,11 @@ void AAnomalyCharacter::Die()
 void AAnomalyCharacter::ChangeSanity(float DeltaSanity)
 {
 	Sanity += DeltaSanity;
-	AAnomalyHUD* HUD = Cast<AAnomalyHUD>(Cast<APlayerController>(GetController())->GetHUD());
-	HUD->GetHUDWidget()->SetSanityPercent(Sanity);
+	Cast<AAnomalyHUD>(Cast<APlayerController>(GetController())->GetHUD())->GetHUDWidget()->SetSanityPercent(Sanity);
 	if (Sanity <= 0)
 	{
 		Die();
 	}
-}
-
-void AAnomalyCharacter::IncrementClearedAnomalies()
-{
-	++ClearedAnomalies;
 }
 
 void AAnomalyCharacter::Move(const FInputActionValue& Value)

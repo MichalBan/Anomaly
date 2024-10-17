@@ -2,7 +2,6 @@
 
 
 #include "AnomalySpawner.h"
-
 #include "AnomalyGameMode.h"
 #include "Engine/StaticMeshActor.h"
 
@@ -13,9 +12,20 @@ AAnomalySpawner::AAnomalySpawner()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+void AAnomalySpawner::ClearAnomalies()
+{
+	for (AActor* Anomaly : Anomalies)
+	{
+		Anomaly->Destroy();
+	}
+	Anomalies.Empty();
+	GetWorldTimerManager().ClearTimer(SpawnTimer);
+}
+
 void AAnomalySpawner::RemoveAnomaly(AActor* Anomaly)
 {
 	Anomalies.Remove(Anomaly);
+	Cast<AAnomalyGameMode>(GetWorld()->GetAuthGameMode())->IncrementClearedAnomalies();
 }
 
 // Called when the game starts or when spawned
@@ -24,6 +34,7 @@ void AAnomalySpawner::BeginPlay()
 	Super::BeginPlay();
 
 	SpawnAnomaly();
+	Cast<AAnomalyGameMode>(GetWorld()->GetAuthGameMode())->RegisterSpawner(this);
 }
 
 // Called every frame

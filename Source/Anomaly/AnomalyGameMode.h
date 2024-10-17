@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AnomalySpawner.h"
 #include "GameFramework/GameModeBase.h"
 #include "AnomalyGameMode.generated.h"
 
@@ -13,9 +14,22 @@ class AAnomalyGameMode : public AGameModeBase
 
 public:
 	AAnomalyGameMode();
+	void IncrementClearedAnomalies();
+	int GetClearedAnomalies();
+	void RegisterSpawner(AAnomalySpawner* InSpawner);
 
 private:
 	virtual void BeginPlay() override;
+	void Win();
+	void OnGameTimer();
+
+	UPROPERTY()
+	AAnomalySpawner* Spawner;
+	FTimerHandle GameTimer;
+	int TimeLeft = 0;
+	int ClearedAnomalies = 0;
+
+	const int GameTime = 70;
 };
 
 

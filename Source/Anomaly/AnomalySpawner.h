@@ -15,6 +15,7 @@ class ANOMALY_API AAnomalySpawner : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AAnomalySpawner();
+	void ClearAnomalies();
 
 protected:
 	UPROPERTY(EditAnywhere)
