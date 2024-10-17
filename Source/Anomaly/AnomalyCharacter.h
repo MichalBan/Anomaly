@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AnomalyAudioComponent.h"
 #include "TP_WeaponComponent.h"
+#include "Components/SpotLightComponent.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "AnomalyCharacter.generated.h"
@@ -49,6 +50,7 @@ protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 	virtual void Tick(float DeltaTime) override;
+	void Die();
 	// End of APawn interface
 	UPROPERTY(BlueprintReadWrite)
 	UTP_WeaponComponent* Weapon;
@@ -63,6 +65,8 @@ private:
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Spotlight, meta = (AllowPrivateAccess = "true"))
+	USpotLightComponent* Flashlight;
 
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))

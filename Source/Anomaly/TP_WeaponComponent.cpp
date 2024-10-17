@@ -91,9 +91,6 @@ void UTP_WeaponComponent::SetupHeatCylinder(UStaticMeshComponent* InHeatCylinder
 	UMaterialInterface* Material = HeatCylinder->GetMaterial(0);
 	UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(Material, nullptr);
 	HeatCylinder->SetMaterial(0, DynamicMaterial);
-	FLinearColor CurrentColor;
-	DynamicMaterial->GetVectorParameterValue(TEXT("DiffuseColor"), CurrentColor);
-	MaxColor = CurrentColor;
 }
 
 bool UTP_WeaponComponent::AttachWeapon(AAnomalyCharacter* TargetCharacter)
@@ -189,18 +186,17 @@ void UTP_WeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	{
 		auto Material = Cast<UMaterialInstanceDynamic>(HeatCylinder->GetMaterial(0));
 		FLinearColor CurrentColor;
-		Material->GetVectorParameterValue(TEXT("DiffuseColor"), CurrentColor);
-		if (Heat < 0.5)
+		Material->GetVectorParameterValue(TEXT("EmissiveColor"), CurrentColor);
+		if (Heat < HeatColorThreshold)
 		{
-			CurrentColor = MinColor;
+			CurrentColor = FLinearColor::Black;
 		}
 		else
 		{
-			float HeatColor = (Heat - 0.5) * HeatColorFactor;
-			CurrentColor.R = MinColor.R + MaxColor.R * HeatColor;
-			CurrentColor.G = MinColor.G + MaxColor.G * HeatColor;
-			CurrentColor.B = MinColor.B + MaxColor.B * HeatColor;
+			CurrentColor.R = HeatColor.R * (Heat - HeatColorThreshold) * HeatColorFactor;
+			CurrentColor.G = HeatColor.G * (Heat - HeatColorThreshold) * HeatColorFactor;
+			CurrentColor.B = HeatColor.B * (Heat - HeatColorThreshold) * HeatColorFactor;
 		}
-		Material->SetVectorParameterValue(TEXT("DiffuseColor"), CurrentColor);
+		Material->SetVectorParameterValue(TEXT("EmissiveColor"), CurrentColor);
 	}
 }

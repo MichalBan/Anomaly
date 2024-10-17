@@ -38,6 +38,11 @@ AAnomalyCharacter::AAnomalyCharacter()
 	Mesh1P->CastShadow = false;
 	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
+
+	Flashlight = CreateDefaultSubobject<USpotLightComponent>(TEXT("Flashlight"));
+	Flashlight->SetupAttachment(FirstPersonCameraComponent);
+	Flashlight->SetOuterConeAngle(20);
+	Flashlight->SetRelativeLocation(FVector(0, 0, 0));
 }
 
 void AAnomalyCharacter::BeginPlay()
@@ -76,10 +81,37 @@ void AAnomalyCharacter::Tick(float DeltaTime)
 
 	if (Sanity <= 0)
 	{
-		AddActorLocalOffset(DeltaTime * FVector(5, 10, -30));
+		AddActorLocalOffset(DeltaTime * FVector(5, 10, -25));
+		if (Weapon)
+		{
+			Weapon->AddRelativeLocation(DeltaTime * FVector(-10, -3, -5));
+		}
 	}
 }
 
+
+void AAnomalyCharacter::Die()
+{
+	AAnomalyHUD* HUD = Cast<AAnomalyHUD>(Cast<APlayerController>(GetController())->GetHUD());
+	GetController()->InputComponent->bBlockInput = true;
+	if (Weapon)
+	{
+		Weapon->StopFire();
+	}
+	if (Flashlight)
+	{
+		Flashlight->DestroyComponent();
+	}
+	HUD->GetHUDWidget()->BuildSummaryText(ClearedAnomalies);
+	SetActorEnableCollision(false);
+	GetCapsuleComponent()->SetEnableGravity(false);
+
+	FTimerHandle Timer;
+	GetWorldTimerManager().SetTimer(Timer, [this]
+	{
+		UGameplayStatics::OpenLevel(GetWorld(), "/Game/StarterContent/Maps/Minimal_Default");
+	}, 5.0f, false);
+}
 
 void AAnomalyCharacter::ChangeSanity(float DeltaSanity)
 {
@@ -88,14 +120,7 @@ void AAnomalyCharacter::ChangeSanity(float DeltaSanity)
 	HUD->GetHUDWidget()->SetSanityPercent(Sanity);
 	if (Sanity <= 0)
 	{
-		GetController()->InputComponent->bBlockInput = true;
-		Weapon->StopFire();
-		HUD->GetHUDWidget()->BuildSummaryText(ClearedAnomalies);
-		FTimerHandle Timer;
-		GetWorldTimerManager().SetTimer(Timer, [this]
-		{
-			UGameplayStatics::OpenLevel(GetWorld(), "/Game/StarterContent/Maps/Minimal_Default");
-		}, 5.0f, false);
+		Die();
 	}
 }
 

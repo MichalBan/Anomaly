@@ -14,6 +14,8 @@ class ANOMALY_API UTP_WeaponComponent : public USkeletalMeshComponent
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditAnywhere)
+	FLinearColor HeatColor;
 	/** Projectile class to spawn */
 	UPROPERTY(EditDefaultsOnly, Category=Projectile)
 	TSubclassOf<class AAnomalyProjectile> ProjectileClass;
@@ -75,12 +77,11 @@ private:
 	UPROPERTY()
 	UStaticMeshComponent* HeatCylinder;
 	float Heat = 0;
-	FLinearColor MaxColor;
 	bool bIsFiring = false;
 
 	const float FireRate = 0.1f;
 	const float HeatingRate = 0.5f;
 	const float CoolingRate = 0.2f;
-	const float HeatColorFactor = 0.2f;
-	const FLinearColor MinColor = FLinearColor(.01, .01, .01);
+	const float HeatColorFactor = 0.5f;
+	const float HeatColorThreshold = 0.25f;
 };

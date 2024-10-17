@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/Border.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "HUDWidget.generated.h"
@@ -25,4 +26,6 @@ private:
 	UProgressBar* ProgressBar_Sanity;
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* Text_Summary;
+	UPROPERTY(meta=(BindWidget))
+	UBorder* Border_Blood;
 };
