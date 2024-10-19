@@ -37,6 +37,7 @@ public:
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
+	float GetFootstepRate();
 
 protected:
 	/** Called for movement input */

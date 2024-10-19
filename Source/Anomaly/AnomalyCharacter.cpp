@@ -96,6 +96,7 @@ void AAnomalyCharacter::Die()
 	if (Weapon)
 	{
 		Weapon->StopFire();
+		Weapon->StopSwaying();
 	}
 	if (Flashlight)
 	{
@@ -120,6 +121,11 @@ void AAnomalyCharacter::ChangeSanity(float DeltaSanity)
 	{
 		Die();
 	}
+}
+
+float AAnomalyCharacter::GetFootstepRate()
+{
+	return FootstepRate;
 }
 
 void AAnomalyCharacter::Move(const FInputActionValue& Value)

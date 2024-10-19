@@ -58,6 +58,7 @@ public:
 	void StopFire();
 	UFUNCTION(BlueprintCallable)
 	void SetupHeatCylinder(UStaticMeshComponent* InHeatCylinder);
+	void StopSwaying();
 
 protected:
 	/** Ends gameplay for this component. */
@@ -78,6 +79,14 @@ private:
 	UStaticMeshComponent* HeatCylinder;
 	float Heat = 0;
 	bool bIsFiring = false;
+	FVector BaseLocation;
+
+	bool bSnapToBase = false;
+	bool bStopSwaying = false;
+	float Offset = 0;
+	float SwayFrequency = 1.0f;
+	float Phase = 0;
+	float Amplitude = 0.5f;
 
 	const float FireRate = 0.1f;
 	const float HeatingRate = 0.5f;
