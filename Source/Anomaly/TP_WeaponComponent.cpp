@@ -187,6 +187,7 @@ void UTP_WeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	{
 		float Angle = (100 - HitResult.Distance) * 0.8;
 		SetRelativeRotation(FRotator(0, -90, Angle));
+		StopFire();
 	}
 	else
 	{
