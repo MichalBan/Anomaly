@@ -19,6 +19,10 @@ void AAnomalySpawner::ClearAnomalies()
 		Anomaly->Destroy();
 	}
 	Anomalies.Empty();
+}
+
+void AAnomalySpawner::StopSpawning()
+{
 	GetWorldTimerManager().ClearTimer(SpawnTimer);
 }
 

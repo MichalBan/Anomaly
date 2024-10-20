@@ -16,6 +16,7 @@ public:
 	// Sets default values for this actor's properties
 	AAnomalySpawner();
 	void ClearAnomalies();
+	void StopSpawning();
 
 protected:
 	UPROPERTY(EditAnywhere)

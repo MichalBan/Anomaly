@@ -46,15 +46,30 @@ void AAnomalyGameMode::BeginPlay()
 void AAnomalyGameMode::Win()
 {
 	Cast<AAnomalyHUD>(GetWorld()->GetFirstPlayerController()->GetHUD())->GetHUDWidget()->BuildSummaryText(true);
-	if(Spawner)
+	if (Spawner)
 	{
 		Spawner->ClearAnomalies();
+		Spawner->StopSpawning();
 	}
 	GetWorldTimerManager().SetTimer(GameTimer, [this]
 	{
 		UGameplayStatics::OpenLevel(GetWorld(), "/Game/StarterContent/Maps/Minimal_Default");
 	}, 5.0f, false);
 }
+
+void AAnomalyGameMode::Lose()
+{
+	Cast<AAnomalyHUD>(GetWorld()->GetFirstPlayerController()->GetHUD())->GetHUDWidget()->BuildSummaryText(false);
+	if (Spawner)
+	{
+		Spawner->StopSpawning();
+	}
+	GetWorldTimerManager().SetTimer(GameTimer, [this]
+	{
+		UGameplayStatics::OpenLevel(GetWorld(), "/Game/StarterContent/Maps/Minimal_Default");
+	}, 5.0f, false);
+}
+
 
 void AAnomalyGameMode::OnGameTimer()
 {

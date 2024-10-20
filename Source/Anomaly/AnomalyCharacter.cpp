@@ -2,6 +2,7 @@
 
 #include "AnomalyCharacter.h"
 
+#include "AnomalyGameMode.h"
 #include "AnomalyHUD.h"
 #include "AnomalyProjectile.h"
 #include "Animation/AnimInstance.h"
@@ -102,15 +103,8 @@ void AAnomalyCharacter::Die()
 	{
 		Flashlight->DestroyComponent();
 	}
-	Cast<AAnomalyHUD>(Cast<APlayerController>(GetController())->GetHUD())->GetHUDWidget()->BuildSummaryText(false);
 	SetActorEnableCollision(false);
 	GetCapsuleComponent()->SetEnableGravity(false);
-
-	FTimerHandle Timer;
-	GetWorldTimerManager().SetTimer(Timer, [this]
-	{
-		UGameplayStatics::OpenLevel(GetWorld(), "/Game/StarterContent/Maps/Minimal_Default");
-	}, 5.0f, false);
 }
 
 void AAnomalyCharacter::ChangeSanity(float DeltaSanity)
@@ -119,7 +113,9 @@ void AAnomalyCharacter::ChangeSanity(float DeltaSanity)
 	Cast<AAnomalyHUD>(Cast<APlayerController>(GetController())->GetHUD())->GetHUDWidget()->SetSanityPercent(Sanity);
 	if (Sanity <= 0)
 	{
+		Sanity = 0;
 		Die();
+		Cast<AAnomalyGameMode>(GetWorld()->GetAuthGameMode())->Lose();
 	}
 }
 

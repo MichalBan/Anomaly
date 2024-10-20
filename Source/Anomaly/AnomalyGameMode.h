@@ -17,6 +17,7 @@ public:
 	void IncrementClearedAnomalies();
 	int GetClearedAnomalies();
 	void RegisterSpawner(AAnomalySpawner* InSpawner);
+	void Lose();
 
 private:
 	virtual void BeginPlay() override;
