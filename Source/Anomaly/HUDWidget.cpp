@@ -7,7 +7,7 @@
 
 void UHUDWidget::SetSanityPercent(float Percent)
 {
-	ProgressBar_Sanity->SetPercent(Percent);
+	GoalSanity = Percent;
 }
 
 void UHUDWidget::SetTime(int InSeconds)
@@ -27,4 +27,24 @@ void UHUDWidget::BuildSummaryText(bool bWin)
 	{
 		Border_Blood->SetVisibility(ESlateVisibility::Visible);
 	}
+}
+
+void UHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	float CurrentSanity = ProgressBar_Sanity->GetPercent();
+	if (GoalSanity - CurrentSanity > MaxSanityChange)
+	{
+		CurrentSanity += InDeltaTime * MaxSanityChange;
+	}
+	else if (CurrentSanity - GoalSanity > MaxSanityChange)
+	{
+		CurrentSanity -= InDeltaTime * MaxSanityChange;
+	}
+	else
+	{
+		CurrentSanity = GoalSanity;
+	}
+	ProgressBar_Sanity->SetPercent(CurrentSanity);
 }

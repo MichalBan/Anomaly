@@ -51,10 +51,7 @@ void AAnomalyGameMode::Win()
 		Spawner->ClearAnomalies();
 		Spawner->StopSpawning();
 	}
-	GetWorldTimerManager().SetTimer(GameTimer, [this]
-	{
-		UGameplayStatics::OpenLevel(GetWorld(), "/Game/StarterContent/Maps/Minimal_Default");
-	}, 5.0f, false);
+	GetWorldTimerManager().SetTimer(GameTimer, this, &AAnomalyGameMode::BackToMenu, 5.0f);
 }
 
 void AAnomalyGameMode::Lose()
@@ -64,12 +61,13 @@ void AAnomalyGameMode::Lose()
 	{
 		Spawner->StopSpawning();
 	}
-	GetWorldTimerManager().SetTimer(GameTimer, [this]
-	{
-		UGameplayStatics::OpenLevel(GetWorld(), "/Game/StarterContent/Maps/Minimal_Default");
-	}, 5.0f, false);
+	GetWorldTimerManager().SetTimer(GameTimer, this, &AAnomalyGameMode::BackToMenu, 5.0f);
 }
 
+void AAnomalyGameMode::BackToMenu()
+{
+	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), MenuLevel);
+}
 
 void AAnomalyGameMode::OnGameTimer()
 {

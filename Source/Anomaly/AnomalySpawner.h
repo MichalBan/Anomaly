@@ -5,14 +5,15 @@
 #include "CoreMinimal.h"
 #include "AnomalyActor.h"
 #include "GameFramework/Actor.h"
+#include "NavMesh/NavMeshBoundsVolume.h"
 #include "AnomalySpawner.generated.h"
 
 UCLASS()
 class ANOMALY_API AAnomalySpawner : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AAnomalySpawner();
 	void ClearAnomalies();
@@ -23,6 +24,11 @@ protected:
 	TArray<AStaticMeshActor*> ValidObjects;
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<AAnomalyActor>> ObjectAnomalies;
+
+	UPROPERTY(EditAnywhere)
+	TArray<AStaticMeshActor*> ValidSpawns;
+	UPROPERTY(EditAnywhere)
+	TArray<TSubclassOf<AAnomalyActor>> EntityAnomalies;
 
 private:
 	// Called when the game starts or when spawned
@@ -37,6 +43,7 @@ private:
 	TArray<AActor*> Anomalies;
 	FTimerHandle SpawnTimer;
 
+	float EntityOdds = 0.2f;
 	const float MinSpawnTime = 10.0f;
 	const float MaxSpawnTime = 20.0f;
 };

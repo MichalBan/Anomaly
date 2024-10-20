@@ -10,8 +10,8 @@ UCLASS()
 class ANOMALY_API AAnomalyActor : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	AAnomalyActor();
 
 	void TakeHit();
@@ -29,7 +29,10 @@ protected:
 	USoundBase* ClearSound;
 	UPROPERTY(BlueprintReadWrite)
 	UAudioComponent* AudioComponent;
+	UPROPERTY(BlueprintReadOnly)
 	bool bClear;
+
+	const float SanityReward = 0.1f;
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;

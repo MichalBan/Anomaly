@@ -88,6 +88,10 @@ void AAnomalyCharacter::Tick(float DeltaTime)
 			Weapon->AddRelativeLocation(DeltaTime * FVector(-10, -3, -5));
 		}
 	}
+	else
+	{
+		ChangeSanity(-DeltaTime * SanityDrain);
+	}
 }
 
 
@@ -110,13 +114,17 @@ void AAnomalyCharacter::Die()
 void AAnomalyCharacter::ChangeSanity(float DeltaSanity)
 {
 	Sanity += DeltaSanity;
-	Cast<AAnomalyHUD>(Cast<APlayerController>(GetController())->GetHUD())->GetHUDWidget()->SetSanityPercent(Sanity);
-	if (Sanity <= 0)
+	if (Sanity > 1.0f)
+	{
+		Sanity = 1.0f;
+	}
+	else if (Sanity <= 0)
 	{
 		Sanity = 0;
 		Die();
 		Cast<AAnomalyGameMode>(GetWorld()->GetAuthGameMode())->Lose();
 	}
+	Cast<AAnomalyHUD>(Cast<APlayerController>(GetController())->GetHUD())->GetHUDWidget()->SetSanityPercent(Sanity);
 }
 
 float AAnomalyCharacter::GetFootstepRate()

@@ -51,18 +51,46 @@ void AAnomalySpawner::SpawnAnomaly()
 {
 	if (ValidObjects.IsEmpty() || ObjectAnomalies.IsEmpty())
 	{
-		return;
+		// no more object anomalies left, only spawn entity anomalies
+		EntityOdds = 1.0f;
 	}
-	int ObjectIndex = FMath::RandRange(0, ValidObjects.Num() - 1);
-	AStaticMeshActor* Object = ValidObjects[ObjectIndex];
-	ValidObjects.RemoveAt(ObjectIndex);
-	UClass* AnomalyClass = ObjectAnomalies[FMath::RandRange(0, ObjectAnomalies.Num() - 1)];
-	AAnomalyActor* Anomaly = GetWorld()->SpawnActor<AAnomalyActor>(AnomalyClass, Object->GetActorLocation(),
-	                                                               FRotator::ZeroRotator);
-	Anomaly->SetObject(Object);
+
+	if (ValidSpawns.IsEmpty() || EntityAnomalies.IsEmpty())
+	{
+		// no more entity anomalies left
+		if (EntityOdds == 1.0f)
+		{
+			// no more anomalies of any kind left
+			GEngine->AddOnScreenDebugMessage(0, 5.0f, FColor::Red, TEXT("Can not spawn anomaly"));
+			StopSpawning();
+		}
+		EntityOdds = 0.0f;
+	}
+
+	AAnomalyActor* Anomaly;
+	if (FMath::RandRange(0.0f, 1.0f) < EntityOdds)
+	{
+		int SpawnIndex = FMath::RandRange(0, ValidSpawns.Num() - 1);
+		AStaticMeshActor* SpawnActor = ValidSpawns[SpawnIndex];
+		FVector SpawnLocation = SpawnActor->GetActorLocation() + FVector(0, 0, 10);
+		ValidSpawns.RemoveAt(SpawnIndex);
+		UClass* AnomalyClass = EntityAnomalies[FMath::RandRange(0, EntityAnomalies.Num() - 1)];
+		Anomaly = GetWorld()->SpawnActor<AAnomalyActor>(AnomalyClass, SpawnLocation, FRotator::ZeroRotator);
+	}
+	else
+	{
+		int ObjectIndex = FMath::RandRange(0, ValidObjects.Num() - 1);
+		AStaticMeshActor* Object = ValidObjects[ObjectIndex];
+		ValidObjects.RemoveAt(ObjectIndex);
+
+		UClass* AnomalyClass = ObjectAnomalies[FMath::RandRange(0, ObjectAnomalies.Num() - 1)];
+		Anomaly = GetWorld()->SpawnActor<AAnomalyActor>(AnomalyClass, Object->GetActorLocation(),
+		                                                FRotator::ZeroRotator);
+		Anomaly->SetObject(Object);
+	}
+
 	Anomaly->OnDestroyed.AddDynamic(this, &AAnomalySpawner::RemoveAnomaly);
 	Anomalies.Add(Anomaly);
-
 	GetWorldTimerManager().SetTimer(SpawnTimer, this, &AAnomalySpawner::SpawnAnomaly,
 	                                FMath::RandRange(MinSpawnTime, MaxSpawnTime));
 }

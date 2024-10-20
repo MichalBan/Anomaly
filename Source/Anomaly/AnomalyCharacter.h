@@ -81,4 +81,5 @@ private:
 	float Sanity = 1.0f;
 	FTimerHandle FootstepTimer;
 	const float FootstepRate = 0.5f;
+	const float SanityDrain = 0.007f;
 };

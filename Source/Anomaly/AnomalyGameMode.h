@@ -22,8 +22,11 @@ public:
 private:
 	virtual void BeginPlay() override;
 	void Win();
+	void BackToMenu();
 	void OnGameTimer();
 
+	UPROPERTY(EditAnywhere)
+	TSoftObjectPtr<UWorld> MenuLevel;
 	UPROPERTY()
 	AAnomalySpawner* Spawner;
 	FTimerHandle GameTimer;
@@ -32,6 +35,3 @@ private:
 
 	const int GameTime = 70;
 };
-
-
-

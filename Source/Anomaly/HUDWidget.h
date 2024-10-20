@@ -16,13 +16,15 @@ UCLASS()
 class ANOMALY_API UHUDWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
 public:
 	void SetSanityPercent(float Percent);
 	void SetTime(int InSeconds);
 	void BuildSummaryText(bool bWin);
 
 private:
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* Text_Time;
 	UPROPERTY(meta=(BindWidget))
@@ -31,4 +33,8 @@ private:
 	UTextBlock* Text_Summary;
 	UPROPERTY(meta=(BindWidget))
 	UBorder* Border_Blood;
+
+	float GoalSanity = 1.0f;
+
+	const float MaxSanityChange = 0.2f;
 };
