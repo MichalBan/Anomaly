@@ -17,6 +17,8 @@ public:
 	void TakeHit();
 	UFUNCTION(BlueprintNativeEvent)
 	void SetObject(AStaticMeshActor* Object);
+	UFUNCTION(BlueprintNativeEvent)
+	void ActivateAnomaly();
 
 protected:
 	UFUNCTION(BlueprintNativeEvent)

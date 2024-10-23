@@ -28,7 +28,7 @@ void AAnomalySpawner::StopSpawning()
 
 void AAnomalySpawner::RemoveAnomaly(AActor* Anomaly)
 {
-	Anomalies.Remove(Anomaly);
+	Anomalies.Remove(Cast<AAnomalyActor>(Anomaly));
 	Cast<AAnomalyGameMode>(GetWorld()->GetAuthGameMode())->IncrementClearedAnomalies();
 }
 
@@ -37,8 +37,8 @@ void AAnomalySpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SpawnAnomaly();
 	Cast<AAnomalyGameMode>(GetWorld()->GetAuthGameMode())->RegisterSpawner(this);
+	GetWorldTimerManager().SetTimer(SpawnTimer, this, &AAnomalySpawner::SpawnAnomaly, GracePeriod);
 }
 
 // Called every frame
@@ -49,44 +49,55 @@ void AAnomalySpawner::Tick(float DeltaTime)
 
 void AAnomalySpawner::SpawnAnomaly()
 {
-	if (ValidObjects.IsEmpty() || ObjectAnomalies.IsEmpty())
-	{
-		// no more object anomalies left, only spawn entity anomalies
-		EntityOdds = 1.0f;
-	}
-
-	if (ValidSpawns.IsEmpty() || EntityAnomalies.IsEmpty())
-	{
-		// no more entity anomalies left
-		if (EntityOdds == 1.0f)
-		{
-			// no more anomalies of any kind left
-			GEngine->AddOnScreenDebugMessage(0, 5.0f, FColor::Red, TEXT("Can not spawn anomaly"));
-			StopSpawning();
-		}
-		EntityOdds = 0.0f;
-	}
-
 	AAnomalyActor* Anomaly;
-	if (FMath::RandRange(0.0f, 1.0f) < EntityOdds)
+	if (Cast<AAnomalyGameMode>(GetWorld()->GetAuthGameMode())->GetClearedAnomalies() % DoorAnomalyPeriod == 0 &&
+		!Prespawned.IsEmpty())
 	{
-		int SpawnIndex = FMath::RandRange(0, ValidSpawns.Num() - 1);
-		AStaticMeshActor* SpawnActor = ValidSpawns[SpawnIndex];
-		FVector SpawnLocation = SpawnActor->GetActorLocation() + FVector(0, 0, 10);
-		ValidSpawns.RemoveAt(SpawnIndex);
-		UClass* AnomalyClass = EntityAnomalies[FMath::RandRange(0, EntityAnomalies.Num() - 1)];
-		Anomaly = GetWorld()->SpawnActor<AAnomalyActor>(AnomalyClass, SpawnLocation, FRotator::ZeroRotator);
+		int Index = FMath::RandRange(0, Prespawned.Num() - 1);
+		Anomaly = Prespawned[Index];
+		Anomaly->ActivateAnomaly();
+		Prespawned.RemoveAt(Index);
 	}
 	else
 	{
-		int ObjectIndex = FMath::RandRange(0, ValidObjects.Num() - 1);
-		AStaticMeshActor* Object = ValidObjects[ObjectIndex];
-		ValidObjects.RemoveAt(ObjectIndex);
+		if (ValidObjects.IsEmpty() || ObjectAnomalies.IsEmpty())
+		{
+			// no more object anomalies left, only spawn entity anomalies
+			EntityOdds = 1.0f;
+		}
 
-		UClass* AnomalyClass = ObjectAnomalies[FMath::RandRange(0, ObjectAnomalies.Num() - 1)];
-		Anomaly = GetWorld()->SpawnActor<AAnomalyActor>(AnomalyClass, Object->GetActorLocation(),
-		                                                FRotator::ZeroRotator);
-		Anomaly->SetObject(Object);
+		if (ValidSpawns.IsEmpty() || EntityAnomalies.IsEmpty())
+		{
+			// no more entity anomalies left
+			if (EntityOdds == 1.0f)
+			{
+				// no more anomalies of any kind left
+				GEngine->AddOnScreenDebugMessage(0, 5.0f, FColor::Red, TEXT("Can not spawn anomaly"));
+				StopSpawning();
+			}
+			EntityOdds = 0.0f;
+		}
+
+		if (FMath::RandRange(0.0f, 1.0f) < EntityOdds)
+		{
+			int SpawnIndex = FMath::RandRange(0, ValidSpawns.Num() - 1);
+			AStaticMeshActor* SpawnActor = ValidSpawns[SpawnIndex];
+			FVector SpawnLocation = SpawnActor->GetActorLocation() + FVector(0, 0, 10);
+			ValidSpawns.RemoveAt(SpawnIndex);
+			UClass* AnomalyClass = EntityAnomalies[FMath::RandRange(0, EntityAnomalies.Num() - 1)];
+			Anomaly = GetWorld()->SpawnActor<AAnomalyActor>(AnomalyClass, SpawnLocation, FRotator::ZeroRotator);
+		}
+		else
+		{
+			int ObjectIndex = FMath::RandRange(0, ValidObjects.Num() - 1);
+			AStaticMeshActor* Object = ValidObjects[ObjectIndex];
+			ValidObjects.RemoveAt(ObjectIndex);
+
+			UClass* AnomalyClass = ObjectAnomalies[FMath::RandRange(0, ObjectAnomalies.Num() - 1)];
+			Anomaly = GetWorld()->SpawnActor<AAnomalyActor>(AnomalyClass, Object->GetActorLocation(),
+			                                                FRotator::ZeroRotator);
+			Anomaly->SetObject(Object);
+		}
 	}
 
 	Anomaly->OnDestroyed.AddDynamic(this, &AAnomalySpawner::RemoveAnomaly);

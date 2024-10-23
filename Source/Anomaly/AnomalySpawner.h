@@ -30,6 +30,9 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<AAnomalyActor>> EntityAnomalies;
 
+	UPROPERTY(EditAnywhere)
+	TArray<AAnomalyActor*> Prespawned;
+
 private:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -40,10 +43,12 @@ private:
 	void RemoveAnomaly(AActor* Anomaly);
 
 	UPROPERTY()
-	TArray<AActor*> Anomalies;
+	TArray<AAnomalyActor*> Anomalies;
 	FTimerHandle SpawnTimer;
 
 	float EntityOdds = 0.2f;
+	const int DoorAnomalyPeriod = 5;
 	const float MinSpawnTime = 10.0f;
 	const float MaxSpawnTime = 20.0f;
+	const float GracePeriod = 5.0f;
 };

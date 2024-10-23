@@ -17,6 +17,7 @@ class ANOMALY_API AAnomalyHUD : public AHUD
 
 public:
 	virtual void BeginPlay() override;
+	UFUNCTION(BlueprintCallable)
 	UHUDWidget* GetHUDWidget() const;
 
 private:
@@ -24,5 +25,4 @@ private:
 	UHUDWidget* HUDWidget;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UHUDWidget> HUDWidgetClass;
-	
 };

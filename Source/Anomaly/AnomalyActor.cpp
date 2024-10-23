@@ -28,13 +28,18 @@ void AAnomalyActor::TakeHit()
 		{
 			AudioComponent->SetSound(ClearSound);
 		}
-		else
+		else if (AudioComponent)
 		{
 			AudioComponent->Stop();
 		}
 		Clear();
 		Cast<AAnomalyCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn())->ChangeSanity(SanityReward);
 	}
+}
+
+void AAnomalyActor::ActivateAnomaly_Implementation()
+{
+	// Do nothing
 }
 
 void AAnomalyActor::SetObject_Implementation(AStaticMeshActor* Object)
