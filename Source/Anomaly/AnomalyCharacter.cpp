@@ -96,7 +96,7 @@ void AAnomalyCharacter::Tick(float DeltaTime)
 
 void AAnomalyCharacter::Die()
 {
-	GetController()->InputComponent->bBlockInput = true;
+	BlockInput(true);
 	if (Weapon)
 	{
 		Weapon->StopFire();
@@ -124,6 +124,11 @@ void AAnomalyCharacter::ChangeSanity(float DeltaSanity)
 		Cast<AAnomalyGameMode>(GetWorld()->GetAuthGameMode())->Lose();
 	}
 	Cast<AAnomalyPlayerController>(GetWorld()->GetFirstPlayerController())->GetHUDWidget()->SetSanityPercent(Sanity);
+}
+
+void AAnomalyCharacter::BlockInput(bool bBlock) const
+{
+	GetController()->InputComponent->bBlockInput = bBlock;
 }
 
 float AAnomalyCharacter::GetFootstepRate()

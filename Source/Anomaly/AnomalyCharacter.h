@@ -33,6 +33,8 @@ public:
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 	UFUNCTION(BlueprintCallable)
 	void ChangeSanity(float DeltaSanity);
+	UFUNCTION(BlueprintCallable)
+	void BlockInput(bool bBlock) const;
 
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
