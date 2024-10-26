@@ -35,6 +35,7 @@ public:
 	void ChangeSanity(float DeltaSanity);
 	UFUNCTION(BlueprintCallable)
 	void BlockInput(bool bBlock) const;
+	void Die();
 
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -52,7 +53,6 @@ protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 	virtual void Tick(float DeltaTime) override;
-	void Die();
 	// End of APawn interface
 	UPROPERTY(BlueprintReadWrite)
 	UTP_WeaponComponent* Weapon;
@@ -80,7 +80,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	USoundBase* FootstepSound;
 
-	float Sanity = 1.0f;
 	FTimerHandle FootstepTimer;
 	const float FootstepRate = 0.5f;
 	const float SanityDrain = 0.007f;

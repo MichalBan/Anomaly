@@ -2,8 +2,8 @@
 
 #include "AnomalyGameMode.h"
 #include "AnomalyCharacter.h"
+#include "AnomalyGameInstance.h"
 #include "AnomalyPlayerController.h"
-#include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
 
 AAnomalyGameMode::AAnomalyGameMode()
@@ -17,12 +17,12 @@ AAnomalyGameMode::AAnomalyGameMode()
 
 void AAnomalyGameMode::IncrementClearedAnomalies()
 {
-	++ClearedAnomalies;
+	++GI->ClearedAnomalies;
 }
 
 int AAnomalyGameMode::GetClearedAnomalies()
 {
-	return ClearedAnomalies;
+	return GI->ClearedAnomalies;
 }
 
 void AAnomalyGameMode::RegisterSpawner(AAnomalySpawner* InSpawner)
@@ -39,8 +39,6 @@ void AAnomalyGameMode::BeginPlay()
 	CVar = IConsoleManager::Get().FindConsoleVariable(TEXT("r.VSync"));
 	CVar->Set(1);
 
-	TimeLeft = GameTime;
-	GetWorldTimerManager().SetTimer(GameTimer, this, &AAnomalyGameMode::OnGameTimer, 1.0f, true);
 }
 
 void AAnomalyGameMode::Win()
@@ -51,7 +49,7 @@ void AAnomalyGameMode::Win()
 		Spawner->ClearAnomalies();
 		Spawner->StopSpawning();
 	}
-	GetWorldTimerManager().SetTimer(GameTimer, this, &AAnomalyGameMode::BackToMenu, 5.0f);
+	GI->EndGame();
 }
 
 void AAnomalyGameMode::Lose()
@@ -61,20 +59,5 @@ void AAnomalyGameMode::Lose()
 	{
 		Spawner->StopSpawning();
 	}
-	GetWorldTimerManager().SetTimer(GameTimer, this, &AAnomalyGameMode::BackToMenu, 5.0f);
-}
-
-void AAnomalyGameMode::BackToMenu()
-{
-	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), MenuLevel);
-}
-
-void AAnomalyGameMode::OnGameTimer()
-{
-	--TimeLeft;
-	Cast<AAnomalyPlayerController>(GetWorld()->GetFirstPlayerController())->GetHUDWidget()->SetTime(TimeLeft);
-	if (TimeLeft <= 0)
-	{
-		Win();
-	}
+	GI->EndGame();
 }

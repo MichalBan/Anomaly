@@ -2,6 +2,7 @@
 
 #include "AnomalyCharacter.h"
 
+#include "AnomalyGameInstance.h"
 #include "AnomalyGameMode.h"
 #include "AnomalyPlayerController.h"
 #include "Animation/AnimInstance.h"
@@ -49,8 +50,6 @@ void AAnomalyCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
-
-	Sanity = 1.0f;
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -79,7 +78,7 @@ void AAnomalyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (Sanity <= 0)
+	if (GI->Sanity <= 0)
 	{
 		AddActorLocalOffset(DeltaTime * FVector(5, 10, -25));
 		if (Weapon)
@@ -112,6 +111,7 @@ void AAnomalyCharacter::Die()
 
 void AAnomalyCharacter::ChangeSanity(float DeltaSanity)
 {
+	float& Sanity = GI->Sanity;
 	Sanity += DeltaSanity;
 	if (Sanity > 1.0f)
 	{

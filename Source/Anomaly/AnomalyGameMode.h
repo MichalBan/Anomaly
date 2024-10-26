@@ -18,20 +18,11 @@ public:
 	int GetClearedAnomalies();
 	void RegisterSpawner(AAnomalySpawner* InSpawner);
 	void Lose();
+	void Win();
 
 private:
 	virtual void BeginPlay() override;
-	void Win();
-	void BackToMenu();
-	void OnGameTimer();
 
-	UPROPERTY(EditAnywhere)
-	TSoftObjectPtr<UWorld> MenuLevel;
 	UPROPERTY()
 	AAnomalySpawner* Spawner = nullptr;
-	FTimerHandle GameTimer;
-	int TimeLeft = 0;
-	int ClearedAnomalies = 0;
-
-	const int GameTime = 70;
 };
