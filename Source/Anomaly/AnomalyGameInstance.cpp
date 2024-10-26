@@ -11,6 +11,7 @@ void UAnomalyGameInstance::ResetGame()
 {
 	Sanity = 1.0f;
 	TimeLeft = GameTime;
+	AnomalyData.Reset();
 	GetWorld()->GetTimerManager().SetTimer(GameTimer, this, &UAnomalyGameInstance::OnGameTimer, 1.0f, true);
 }
 

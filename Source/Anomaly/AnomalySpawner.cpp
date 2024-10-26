@@ -2,6 +2,8 @@
 
 
 #include "AnomalySpawner.h"
+
+#include "AnomalyGameInstance.h"
 #include "AnomalyGameMode.h"
 #include "Engine/StaticMeshActor.h"
 
@@ -37,6 +39,19 @@ void AAnomalySpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
+	for (int ObjectIndex : GI->AnomalyData.ObjectIndexes)
+	{
+		ValidObjects.RemoveAt(ObjectIndex);
+	}
+	for (int SpawnIndex : GI->AnomalyData.SpawnIndexes)
+	{
+		ValidSpawns.RemoveAt(SpawnIndex);
+	}
+	for (int PrespawnedIndex : GI->AnomalyData.PrespawnedIndexes)
+	{
+		Prespawned.RemoveAt(PrespawnedIndex);
+	}
+
 	DoorAnomalyDelay = FMath::RandRange(0, DoorAnomalyPeriod - 1);
 	Cast<AAnomalyGameMode>(GetWorld()->GetAuthGameMode())->RegisterSpawner(this);
 	GetWorldTimerManager().SetTimer(SpawnTimer, this, &AAnomalySpawner::SpawnAnomaly, GracePeriod);
@@ -55,6 +70,7 @@ void AAnomalySpawner::SpawnAnomaly()
 	if (GameMode->GetClearedAnomalies() % DoorAnomalyPeriod == DoorAnomalyDelay && !Prespawned.IsEmpty())
 	{
 		int Index = FMath::RandRange(0, Prespawned.Num() - 1);
+		GI->AnomalyData.PrespawnedIndexes.Add(Index);
 		Anomaly = Prespawned[Index];
 		Cast<AAnomalyDoor>(Anomaly)->NativeActivateAnomaly();
 		Prespawned.RemoveAt(Index);
@@ -82,6 +98,7 @@ void AAnomalySpawner::SpawnAnomaly()
 		if (FMath::RandRange(0.0f, 1.0f) < EntityOdds)
 		{
 			int SpawnIndex = FMath::RandRange(0, ValidSpawns.Num() - 1);
+			GI->AnomalyData.SpawnIndexes.Add(SpawnIndex);
 			AStaticMeshActor* SpawnActor = ValidSpawns[SpawnIndex];
 			FVector SpawnLocation = SpawnActor->GetActorLocation() + FVector(0, 0, 10);
 			ValidSpawns.RemoveAt(SpawnIndex);
@@ -91,6 +108,7 @@ void AAnomalySpawner::SpawnAnomaly()
 		else
 		{
 			int ObjectIndex = FMath::RandRange(0, ValidObjects.Num() - 1);
+			GI->AnomalyData.ObjectIndexes.Add(ObjectIndex);
 			AStaticMeshActor* Object = ValidObjects[ObjectIndex];
 			ValidObjects.RemoveAt(ObjectIndex);
 

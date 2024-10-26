@@ -7,6 +7,24 @@
 #include "AnomalyGameInstance.generated.h"
 
 #define GI Cast<UAnomalyGameInstance>(GetWorld()->GetGameInstance())
+
+USTRUCT()
+struct FAnomalyData
+{
+	GENERATED_BODY()
+
+	TArray<int> ObjectIndexes;
+	TArray<int> SpawnIndexes;
+	TArray<int> PrespawnedIndexes;
+
+	void Reset()
+	{
+		ObjectIndexes.Empty();
+		SpawnIndexes.Empty();
+		PrespawnedIndexes.Empty();
+	}
+};
+
 /**
  * 
  */
@@ -20,6 +38,7 @@ public:
 	void ResetGame();
 	void EndGame();
 
+	FAnomalyData AnomalyData;
 	float Sanity = 1.0f;
 	FTimerHandle GameTimer;
 	int TimeLeft = 0;

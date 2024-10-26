@@ -3,12 +3,8 @@
 
 #include "HUDWidget.h"
 
+#include "AnomalyGameInstance.h"
 #include "AnomalyGameMode.h"
-
-void UHUDWidget::SetSanityPercent(float Percent)
-{
-	GoalSanity = Percent;
-}
 
 void UHUDWidget::SetTime(int InSeconds)
 {
@@ -34,17 +30,24 @@ void UHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
 	float CurrentSanity = ProgressBar_Sanity->GetPercent();
-	if (GoalSanity - CurrentSanity > MaxSanityChange)
+	if (GI->Sanity - CurrentSanity > MaxSanityChange)
 	{
 		CurrentSanity += InDeltaTime * MaxSanityChange;
 	}
-	else if (CurrentSanity - GoalSanity > MaxSanityChange)
+	else if (CurrentSanity - GI->Sanity > MaxSanityChange)
 	{
 		CurrentSanity -= InDeltaTime * MaxSanityChange;
 	}
 	else
 	{
-		CurrentSanity = GoalSanity;
+		CurrentSanity = GI->Sanity;
 	}
 	ProgressBar_Sanity->SetPercent(CurrentSanity);
+}
+
+void UHUDWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	ProgressBar_Sanity->SetPercent(GI->Sanity);
 }

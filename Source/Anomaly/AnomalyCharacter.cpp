@@ -123,7 +123,6 @@ void AAnomalyCharacter::ChangeSanity(float DeltaSanity)
 		Die();
 		Cast<AAnomalyGameMode>(GetWorld()->GetAuthGameMode())->Lose();
 	}
-	Cast<AAnomalyPlayerController>(GetWorld()->GetFirstPlayerController())->GetHUDWidget()->SetSanityPercent(Sanity);
 }
 
 void AAnomalyCharacter::BlockInput(bool bBlock) const
