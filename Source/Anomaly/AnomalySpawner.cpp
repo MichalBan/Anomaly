@@ -38,7 +38,6 @@ void AAnomalySpawner::BeginPlay()
 	Super::BeginPlay();
 
 	DoorAnomalyDelay = FMath::RandRange(0, DoorAnomalyPeriod - 1);
-	DoorAnomalyDelay = 0;
 	Cast<AAnomalyGameMode>(GetWorld()->GetAuthGameMode())->RegisterSpawner(this);
 	GetWorldTimerManager().SetTimer(SpawnTimer, this, &AAnomalySpawner::SpawnAnomaly, GracePeriod);
 }
