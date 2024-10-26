@@ -28,7 +28,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSoftObjectPtr<UWorld> MenuLevel;
 	UPROPERTY()
-	AAnomalySpawner* Spawner;
+	AAnomalySpawner* Spawner = nullptr;
 	FTimerHandle GameTimer;
 	int TimeLeft = 0;
 	int ClearedAnomalies = 0;

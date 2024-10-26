@@ -15,18 +15,18 @@ class ANOMALY_API UTP_WeaponComponent : public USkeletalMeshComponent
 
 public:
 	UPROPERTY(EditAnywhere)
-	FLinearColor HeatColor;
+	FLinearColor HeatColor = FLinearColor::White;
 	/** Projectile class to spawn */
 	UPROPERTY(EditDefaultsOnly, Category=Projectile)
 	TSubclassOf<class AAnomalyProjectile> ProjectileClass;
 
 	/** Sound to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
-	USoundBase* FireSound;
+	USoundBase* FireSound = nullptr;
 
 	/** AnimMontage to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	UAnimMontage* FireAnimation;
+	UAnimMontage* FireAnimation = nullptr;
 
 	/** Gun muzzle's offset from the characters location */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
@@ -34,13 +34,13 @@ public:
 
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	class UInputMappingContext* FireMappingContext;
+	class UInputMappingContext* FireMappingContext = nullptr;
 
 	/** Fire Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	class UInputAction* FireAction;
+	class UInputAction* FireAction = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	const UInputAction* StopFireAction;
+	const UInputAction* StopFireAction = nullptr;
 
 	/** Sets default values for this component's properties */
 	UTP_WeaponComponent();
@@ -72,11 +72,11 @@ private:
 	FTimerHandle FireTimerHandle;
 	/** The Character holding this weapon*/
 	UPROPERTY()
-	AAnomalyCharacter* Character;
+	AAnomalyCharacter* Character = nullptr;
 	UPROPERTY()
-	UAudioComponent* FireAudioComponent;
+	UAudioComponent* FireAudioComponent = nullptr;
 	UPROPERTY()
-	UStaticMeshComponent* HeatCylinder;
+	UStaticMeshComponent* HeatCylinder = nullptr;
 	float Heat = 0;
 	bool bIsFiring = false;
 	FVector BaseLocation;

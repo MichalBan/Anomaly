@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AnomalyActor.h"
+#include "AnomalyDoor.h"
 #include "GameFramework/Actor.h"
 #include "NavMesh/NavMeshBoundsVolume.h"
 #include "AnomalySpawner.generated.h"
@@ -31,7 +32,7 @@ protected:
 	TArray<TSubclassOf<AAnomalyActor>> EntityAnomalies;
 
 	UPROPERTY(EditAnywhere)
-	TArray<AAnomalyActor*> Prespawned;
+	TArray<AAnomalyDoor*> Prespawned;
 
 private:
 	// Called when the game starts or when spawned
@@ -47,6 +48,7 @@ private:
 	FTimerHandle SpawnTimer;
 
 	float EntityOdds = 0.2f;
+	int DoorAnomalyDelay = 0;
 	const int DoorAnomalyPeriod = 5;
 	const float MinSpawnTime = 10.0f;
 	const float MaxSpawnTime = 20.0f;

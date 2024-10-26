@@ -37,6 +37,8 @@ void AAnomalySpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
+	DoorAnomalyDelay = FMath::RandRange(0, DoorAnomalyPeriod - 1);
+	DoorAnomalyDelay = 0;
 	Cast<AAnomalyGameMode>(GetWorld()->GetAuthGameMode())->RegisterSpawner(this);
 	GetWorldTimerManager().SetTimer(SpawnTimer, this, &AAnomalySpawner::SpawnAnomaly, GracePeriod);
 }
@@ -50,12 +52,12 @@ void AAnomalySpawner::Tick(float DeltaTime)
 void AAnomalySpawner::SpawnAnomaly()
 {
 	AAnomalyActor* Anomaly;
-	if (Cast<AAnomalyGameMode>(GetWorld()->GetAuthGameMode())->GetClearedAnomalies() % DoorAnomalyPeriod == 0 &&
-		!Prespawned.IsEmpty())
+	AAnomalyGameMode* GameMode = Cast<AAnomalyGameMode>(GetWorld()->GetAuthGameMode());
+	if (GameMode->GetClearedAnomalies() % DoorAnomalyPeriod == DoorAnomalyDelay && !Prespawned.IsEmpty())
 	{
 		int Index = FMath::RandRange(0, Prespawned.Num() - 1);
 		Anomaly = Prespawned[Index];
-		Anomaly->ActivateAnomaly();
+		Cast<AAnomalyDoor>(Anomaly)->NativeActivateAnomaly();
 		Prespawned.RemoveAt(Index);
 	}
 	else

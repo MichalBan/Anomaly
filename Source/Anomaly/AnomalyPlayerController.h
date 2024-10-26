@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "HUDWidget.h"
 #include "GameFramework/PlayerController.h"
 #include "AnomalyPlayerController.generated.h"
 
@@ -15,17 +16,21 @@ UCLASS()
 class ANOMALY_API AAnomalyPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
-protected:
 
+public:
+	UFUNCTION(BlueprintCallable)
+	UHUDWidget* GetHUDWidget() const;
+
+protected:
 	/** Input Mapping Context to be used for player input */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputMappingContext* InputMappingContext;
 
-	// Begin Actor interface
-protected:
-
 	virtual void BeginPlay() override;
 
-	// End Actor interface
+private:
+	UPROPERTY()
+	UHUDWidget* HUDWidget;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UHUDWidget> HUDWidgetClass;
 };

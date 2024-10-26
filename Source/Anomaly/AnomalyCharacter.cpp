@@ -3,8 +3,7 @@
 #include "AnomalyCharacter.h"
 
 #include "AnomalyGameMode.h"
-#include "AnomalyHUD.h"
-#include "AnomalyProjectile.h"
+#include "AnomalyPlayerController.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -124,7 +123,7 @@ void AAnomalyCharacter::ChangeSanity(float DeltaSanity)
 		Die();
 		Cast<AAnomalyGameMode>(GetWorld()->GetAuthGameMode())->Lose();
 	}
-	Cast<AAnomalyHUD>(Cast<APlayerController>(GetController())->GetHUD())->GetHUDWidget()->SetSanityPercent(Sanity);
+	Cast<AAnomalyPlayerController>(GetWorld()->GetFirstPlayerController())->GetHUDWidget()->SetSanityPercent(Sanity);
 }
 
 float AAnomalyCharacter::GetFootstepRate()

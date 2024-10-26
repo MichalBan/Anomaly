@@ -5,6 +5,11 @@
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
 
+UHUDWidget* AAnomalyPlayerController::GetHUDWidget() const
+{
+	return HUDWidget;
+}
+
 void AAnomalyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -17,4 +22,7 @@ void AAnomalyPlayerController::BeginPlay()
 		Subsystem->AddMappingContext(InputMappingContext, 0);
 	}
 	SetInputMode(FInputModeGameOnly());
+
+	HUDWidget = CreateWidget<UHUDWidget>(this, HUDWidgetClass);
+	HUDWidget->AddToViewport();
 }

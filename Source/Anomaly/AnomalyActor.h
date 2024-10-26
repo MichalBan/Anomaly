@@ -17,26 +17,26 @@ public:
 	void TakeHit();
 	UFUNCTION(BlueprintNativeEvent)
 	void SetObject(AStaticMeshActor* Object);
-	UFUNCTION(BlueprintNativeEvent)
-	void ActivateAnomaly();
 
 protected:
-	UFUNCTION(BlueprintNativeEvent)
-	void Clear();
-	UPROPERTY(EditAnywhere)
-	int Health;
-	UPROPERTY(EditAnywhere)
-	USoundBase* Sound;
-	UPROPERTY(EditAnywhere)
-	USoundBase* ClearSound;
-	UPROPERTY(BlueprintReadWrite)
-	UAudioComponent* AudioComponent;
-	UPROPERTY(BlueprintReadOnly)
-	bool bClear;
-
-	const float SanityReward = 0.1f;
-
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void Destroyed() override;
+	virtual void NativeClear();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void Clear();
+
+	UPROPERTY(EditAnywhere)
+	int Health = 1;
+	UPROPERTY(EditAnywhere)
+	USoundBase* Sound = nullptr;
+	UPROPERTY(EditAnywhere)
+	USoundBase* ClearSound = nullptr;
+	UPROPERTY(BlueprintReadWrite)
+	UAudioComponent* AudioComponent = nullptr;
+	UPROPERTY(BlueprintReadOnly)
+	bool bClear = false;
+
+	const float SanityReward = 0.1f;
 };

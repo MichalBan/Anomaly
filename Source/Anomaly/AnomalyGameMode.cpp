@@ -2,7 +2,7 @@
 
 #include "AnomalyGameMode.h"
 #include "AnomalyCharacter.h"
-#include "AnomalyHUD.h"
+#include "AnomalyPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -45,7 +45,7 @@ void AAnomalyGameMode::BeginPlay()
 
 void AAnomalyGameMode::Win()
 {
-	Cast<AAnomalyHUD>(GetWorld()->GetFirstPlayerController()->GetHUD())->GetHUDWidget()->BuildSummaryText(true);
+	Cast<AAnomalyPlayerController>(GetWorld()->GetFirstPlayerController())->GetHUDWidget()->BuildSummaryText(true);
 	if (Spawner)
 	{
 		Spawner->ClearAnomalies();
@@ -56,7 +56,7 @@ void AAnomalyGameMode::Win()
 
 void AAnomalyGameMode::Lose()
 {
-	Cast<AAnomalyHUD>(GetWorld()->GetFirstPlayerController()->GetHUD())->GetHUDWidget()->BuildSummaryText(false);
+	Cast<AAnomalyPlayerController>(GetWorld()->GetFirstPlayerController())->GetHUDWidget()->BuildSummaryText(false);
 	if (Spawner)
 	{
 		Spawner->StopSpawning();
@@ -72,7 +72,7 @@ void AAnomalyGameMode::BackToMenu()
 void AAnomalyGameMode::OnGameTimer()
 {
 	--TimeLeft;
-	Cast<AAnomalyHUD>(GetWorld()->GetFirstPlayerController()->GetHUD())->GetHUDWidget()->SetTime(TimeLeft);
+	Cast<AAnomalyPlayerController>(GetWorld()->GetFirstPlayerController())->GetHUDWidget()->SetTime(TimeLeft);
 	if (TimeLeft <= 0)
 	{
 		Win();

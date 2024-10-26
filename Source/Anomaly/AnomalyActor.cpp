@@ -33,11 +33,12 @@ void AAnomalyActor::TakeHit()
 			AudioComponent->Stop();
 		}
 		Clear();
+		NativeClear();
 		Cast<AAnomalyCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn())->ChangeSanity(SanityReward);
 	}
 }
 
-void AAnomalyActor::ActivateAnomaly_Implementation()
+void AAnomalyActor::NativeClear()
 {
 	// Do nothing
 }

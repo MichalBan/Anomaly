@@ -29,12 +29,12 @@ private:
 	void PlayRandomSound();
 
 	UPROPERTY(EditAnywhere)
-	USoundBase* AmbientSound;
+	USoundBase* AmbientSound = nullptr;
 	UPROPERTY(EditAnywhere)
 	TArray<USoundBase*> RandomSounds;
 
 	UPROPERTY()
-	UAudioComponent* AmbientComponent;
+	UAudioComponent* AmbientComponent = nullptr;
 	FTimerHandle RandomTimer;
 	const float FirstRandomDelay = 10.0f;
 	const float MaxRandomTime = 15.0f;
