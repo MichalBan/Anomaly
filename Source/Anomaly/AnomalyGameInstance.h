@@ -43,11 +43,14 @@ public:
 	FTimerHandle GameTimer;
 	int TimeLeft = 0;
 	int ClearedAnomalies = 0;
+	UPROPERTY(BlueprintReadWrite)
+	USoundBase* BeginPlaySound;
+	UPROPERTY(BlueprintReadWrite)
+	int GameTime = 170;
 
 private:
 	void OnGameTimer();
 
 	UPROPERTY(EditAnywhere)
 	TSoftObjectPtr<UWorld> MenuLevel;
-	const int GameTime = 70;
 };

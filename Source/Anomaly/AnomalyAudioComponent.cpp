@@ -16,6 +16,16 @@ UAnomalyAudioComponent::UAnomalyAudioComponent()
 	// ...
 }
 
+void UAnomalyAudioComponent::SetAmbientSound(USoundBase* InSound)
+{
+	AmbientSound = InSound;
+	AmbientComponent->SetSound(AmbientSound);
+	if (!AmbientComponent->IsPlaying())
+	{
+		AmbientComponent->Play();
+	}
+}
+
 
 // Called when the game starts
 void UAnomalyAudioComponent::BeginPlay()
@@ -23,20 +33,8 @@ void UAnomalyAudioComponent::BeginPlay()
 	Super::BeginPlay();
 
 	AmbientComponent = NewObject<UAudioComponent>(this, UAudioComponent::StaticClass());
-	AmbientComponent->SetSound(AmbientSound);
-	AmbientComponent->Play();
-
 	GetWorld()->GetTimerManager().SetTimer(RandomTimer, this, &UAnomalyAudioComponent::PlayRandomSound,
 	                                       FirstRandomDelay + FMath::RandRange(MinRandomTime, MaxRandomTime));
-}
-
-// Called every frame
-void UAnomalyAudioComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-                                           FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
 }
 
 void UAnomalyAudioComponent::PlayRandomSound()

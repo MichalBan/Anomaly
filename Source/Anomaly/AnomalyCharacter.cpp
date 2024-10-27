@@ -4,7 +4,6 @@
 
 #include "AnomalyGameInstance.h"
 #include "AnomalyGameMode.h"
-#include "AnomalyPlayerController.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -50,6 +49,12 @@ void AAnomalyCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+
+	if (GI->BeginPlaySound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), GI->BeginPlaySound, GetActorLocation());
+		GI->BeginPlaySound = nullptr;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////// Input

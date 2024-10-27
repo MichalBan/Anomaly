@@ -36,11 +36,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void BlockInput(bool bBlock) const;
 	void Die();
+	float GetFootstepRate();
 
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* LookAction;
-	float GetFootstepRate();
+	UInputAction* LookAction;
 
 protected:
 	/** Called for movement input */
@@ -54,10 +54,8 @@ protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 	virtual void Tick(float DeltaTime) override;
 	// End of APawn interface
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UTP_WeaponComponent* Weapon;
-	UPROPERTY(BlueprintReadWrite)
-	UAnomalyAudioComponent* AudioComponent;
 
 private:
 	/** Pawn mesh: 1st person view (arms; seen only by self) */

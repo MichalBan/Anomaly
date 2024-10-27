@@ -62,7 +62,7 @@ void AAnomalyDoor::OpenDoor()
 {
 	bOpening = true;
 	DoorYaw = 0.0f;
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, Door->GetActorLocation());
 }
 
 void AAnomalyDoor::CloseDoor()
