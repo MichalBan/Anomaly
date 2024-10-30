@@ -35,6 +35,8 @@ public:
 	void ChangeSanity(float DeltaSanity);
 	UFUNCTION(BlueprintCallable)
 	void BlockInput(bool bBlock) const;
+	UFUNCTION(BlueprintCallable)
+	void LowerWeapon();
 	void Die();
 	float GetFootstepRate();
 

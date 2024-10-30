@@ -135,6 +135,14 @@ void AAnomalyCharacter::BlockInput(bool bBlock) const
 	GetController()->InputComponent->bBlockInput = bBlock;
 }
 
+void AAnomalyCharacter::LowerWeapon()
+{
+	if (Weapon)
+	{
+		Weapon->SetLowered();
+	}
+}
+
 float AAnomalyCharacter::GetFootstepRate()
 {
 	return FootstepRate;

@@ -59,6 +59,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetupHeatCylinder(UStaticMeshComponent* InHeatCylinder);
 	void StopSwaying();
+	void SetLowered();
 
 protected:
 	/** Ends gameplay for this component. */
@@ -81,6 +82,7 @@ private:
 	bool bIsFiring = false;
 	FVector BaseLocation;
 
+	bool bLowered = false;
 	bool bSnapToBase = false;
 	bool bStopSwaying = false;
 	float Offset = 0;

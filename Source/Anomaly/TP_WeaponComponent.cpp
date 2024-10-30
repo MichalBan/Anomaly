@@ -68,7 +68,7 @@ void UTP_WeaponComponent::Fire()
 
 void UTP_WeaponComponent::StartFire()
 {
-	if (Heat > 0.8)
+	if (bLowered || Heat > 0.8)
 	{
 		return;
 	}
@@ -96,6 +96,12 @@ void UTP_WeaponComponent::SetupHeatCylinder(UStaticMeshComponent* InHeatCylinder
 void UTP_WeaponComponent::StopSwaying()
 {
 	bStopSwaying = true;
+}
+
+void UTP_WeaponComponent::SetLowered()
+{
+	bLowered = true;
+	SetRelativeRotation(FRotator(0, -90, 80));
 }
 
 bool UTP_WeaponComponent::AttachWeapon(AAnomalyCharacter* TargetCharacter)
@@ -176,20 +182,23 @@ void UTP_WeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 		return;
 	}
 
-	APlayerController* PlayerController = Cast<APlayerController>(Character->GetController());
-	const FRotator CameraRotation = PlayerController->PlayerCameraManager->GetCameraRotation();
-	FHitResult HitResult;
-	GetWorld()->LineTraceSingleByChannel(HitResult, GetComponentLocation(),
-	                                     GetComponentLocation() + CameraRotation.Vector() * 100, ECC_Visibility);
-	if (HitResult.bBlockingHit)
+	if (!bLowered)
 	{
-		float Angle = (100 - HitResult.Distance) * 0.8;
-		SetRelativeRotation(FRotator(0, -90, Angle));
-		StopFire();
-	}
-	else
-	{
-		SetRelativeRotation(FRotator(0, -90, 0));
+		APlayerController* PlayerController = Cast<APlayerController>(Character->GetController());
+		const FRotator CameraRotation = PlayerController->PlayerCameraManager->GetCameraRotation();
+		FHitResult HitResult;
+		GetWorld()->LineTraceSingleByChannel(HitResult, GetComponentLocation(),
+		                                     GetComponentLocation() + CameraRotation.Vector() * 100, ECC_Visibility);
+		if (HitResult.bBlockingHit)
+		{
+			float Angle = (100 - HitResult.Distance) * 0.8;
+			SetRelativeRotation(FRotator(0, -90, Angle));
+			StopFire();
+		}
+		else
+		{
+			SetRelativeRotation(FRotator(0, -90, 0));
+		}
 	}
 
 	if (bIsFiring)
