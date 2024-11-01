@@ -6,7 +6,6 @@
 #include "AnomalyActor.h"
 #include "AnomalyDoor.h"
 #include "GameFramework/Actor.h"
-#include "NavMesh/NavMeshBoundsVolume.h"
 #include "AnomalySpawner.generated.h"
 
 UCLASS()

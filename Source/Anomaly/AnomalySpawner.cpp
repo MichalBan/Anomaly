@@ -41,6 +41,7 @@ void AAnomalySpawner::BeginPlay()
 
 	for (int ObjectIndex : GI->AnomalyData.ObjectIndexes)
 	{
+		ValidObjects[ObjectIndex]->Destroy();
 		ValidObjects.RemoveAt(ObjectIndex);
 	}
 	for (int SpawnIndex : GI->AnomalyData.SpawnIndexes)
