@@ -2,9 +2,7 @@
 
 
 #include "HUDWidget.h"
-
 #include "AnomalyGameInstance.h"
-#include "AnomalyGameMode.h"
 
 void UHUDWidget::SetTime(int InSeconds)
 {
@@ -15,9 +13,9 @@ void UHUDWidget::SetTime(int InSeconds)
 
 void UHUDWidget::BuildSummaryText(bool bWin)
 {
-	int NumAnomalies = Cast<AAnomalyGameMode>(GetWorld()->GetAuthGameMode())->GetClearedAnomalies();
 	FString Result = bWin ? "You survived" : "Your mind succumbed to madness";
-	FString Summary = FString::Printf(TEXT("%s\n Anomalies cleared: %d"), *Result, NumAnomalies);
+	FString Summary = FString::Printf(
+		TEXT("%s\n Anomalies cleared: %d/%d"), *Result, GI->ClearedAnomalies, GI->SpawnedAnomalies);
 	Text_Summary->SetText(FText::FromString(Summary));
 	if (!bWin)
 	{

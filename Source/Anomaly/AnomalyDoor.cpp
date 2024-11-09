@@ -27,46 +27,45 @@ void AAnomalyDoor::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (!bOpening && !bClosing)
+	switch (DoorState)
 	{
-		return;
-	}
-
-	float AngleChange = DoorSpeed * DeltaSeconds;
-	Door->AddActorLocalRotation(FRotator(0, bOpening ? AngleChange : -AngleChange, 0));
-	DoorYaw += AngleChange;
-	if (DoorYaw >= 90.0f)
-	{
-		Door->AddActorLocalRotation(FRotator(0, bOpening ? 90.0f - DoorYaw : DoorYaw - 90.0f, 0));
-		if (bClosing)
+	case EDoorState::Closed:
+		break;
+	case EDoorState::Open:
+		break;
+	case EDoorState::Opening:
+		Door->AddActorLocalRotation(FRotator(0, DoorSpeed * DeltaSeconds, 0));
+		DoorYaw += DoorSpeed * DeltaSeconds;
+		GEngine->AddOnScreenDebugMessage(1, 1.0f, FColor::Red, FString::Printf(TEXT("DoorYaw: %f"), DoorYaw));
+		if (DoorYaw > 90.0f)
 		{
-			bClosing = false;
+			Door->AddActorLocalRotation(FRotator(0, 90.0f - DoorYaw, 0));
+			DoorState = EDoorState::Open;
+		}
+		break;
+	case EDoorState::Closing:
+		Door->AddActorLocalRotation(FRotator(0, -DoorSpeed * DeltaSeconds, 0));
+		DoorYaw -= DoorSpeed * DeltaSeconds;
+		GEngine->AddOnScreenDebugMessage(1, 1.0f, FColor::Red, FString::Printf(TEXT("DoorYaw: %f"), DoorYaw));
+		if (DoorYaw < 0.0f)
+		{
+			Door->AddActorLocalRotation(FRotator(0, -DoorYaw, 0));
+			DoorState = EDoorState::Closed;
 			OnClose();
 			Destroy();
 		}
-		else
-		{
-			bOpening = false;
-		}
+		break;
 	}
 }
 
 void AAnomalyDoor::NativeClear()
 {
 	Super::NativeClear();
-
-	CloseDoor();
+	DoorState = EDoorState::Closing;
 }
 
 void AAnomalyDoor::OpenDoor()
 {
-	bOpening = true;
-	DoorYaw = 0.0f;
+	DoorState = EDoorState::Opening;
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, Door->GetActorLocation());
-}
-
-void AAnomalyDoor::CloseDoor()
-{
-	bClosing = true;
-	DoorYaw = 0.0f;
 }

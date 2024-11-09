@@ -14,8 +14,6 @@ class AAnomalyGameMode : public AGameModeBase
 
 public:
 	AAnomalyGameMode();
-	void IncrementClearedAnomalies();
-	int GetClearedAnomalies();
 	void RegisterSpawner(AAnomalySpawner* InSpawner);
 	void Lose();
 	void Win();

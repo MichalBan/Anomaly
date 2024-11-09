@@ -83,6 +83,11 @@ void AAnomalyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (GI->bGameEnded)
+	{
+		return;
+	}
+
 	if (GI->Sanity <= 0)
 	{
 		AddActorLocalOffset(DeltaTime * FVector(5, 10, -25));

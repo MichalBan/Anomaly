@@ -11,13 +11,16 @@ void UAnomalyGameInstance::ResetGame()
 {
 	Sanity = 1.0f;
 	ClearedAnomalies = 0;
+	SpawnedAnomalies = 0;
 	TimeLeft = GameTime;
 	AnomalyData.Reset();
+	bGameEnded = false;
 	GetWorld()->GetTimerManager().SetTimer(GameTimer, this, &UAnomalyGameInstance::OnGameTimer, 1.0f, true);
 }
 
 void UAnomalyGameInstance::EndGame()
 {
+	bGameEnded = true;
 	GetWorld()->GetTimerManager().SetTimer(GameTimer, [this]
 	{
 		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), MenuLevel);

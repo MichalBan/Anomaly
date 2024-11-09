@@ -31,7 +31,7 @@ void AAnomalySpawner::StopSpawning()
 void AAnomalySpawner::RemoveAnomaly(AActor* Anomaly)
 {
 	Anomalies.Remove(Cast<AAnomalyActor>(Anomaly));
-	Cast<AAnomalyGameMode>(GetWorld()->GetAuthGameMode())->IncrementClearedAnomalies();
+	++GI->ClearedAnomalies;
 }
 
 // Called when the game starts or when spawned
@@ -48,9 +48,17 @@ void AAnomalySpawner::BeginPlay()
 	{
 		ValidSpawns.RemoveAt(SpawnIndex);
 	}
+
 	for (int PrespawnedIndex : GI->AnomalyData.PrespawnedIndexes)
 	{
 		Prespawned.RemoveAt(PrespawnedIndex);
+	}
+
+	// we entered the level by teleporting from somewhere
+	// this means we cleard a door anomaly
+	if (GI->AnomalyData.PrespawnedIndexes.Num() > 0)
+	{
+		++GI->ClearedAnomalies;
 	}
 
 	DoorAnomalyDelay = FMath::RandRange(0, DoorAnomalyPeriod - 1);
@@ -67,8 +75,7 @@ void AAnomalySpawner::Tick(float DeltaTime)
 void AAnomalySpawner::SpawnAnomaly()
 {
 	AAnomalyActor* Anomaly;
-	AAnomalyGameMode* GameMode = Cast<AAnomalyGameMode>(GetWorld()->GetAuthGameMode());
-	if (GameMode->GetClearedAnomalies() % DoorAnomalyPeriod == DoorAnomalyDelay && !Prespawned.IsEmpty())
+	if (GI->SpawnedAnomalies % DoorAnomalyPeriod == DoorAnomalyDelay && !Prespawned.IsEmpty())
 	{
 		int Index = FMath::RandRange(0, Prespawned.Num() - 1);
 		GI->AnomalyData.PrespawnedIndexes.Add(Index);
@@ -124,4 +131,5 @@ void AAnomalySpawner::SpawnAnomaly()
 	Anomalies.Add(Anomaly);
 	GetWorldTimerManager().SetTimer(SpawnTimer, this, &AAnomalySpawner::SpawnAnomaly,
 	                                FMath::RandRange(MinSpawnTime, MaxSpawnTime));
+	++GI->SpawnedAnomalies;
 }

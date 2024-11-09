@@ -15,16 +15,6 @@ AAnomalyGameMode::AAnomalyGameMode()
 	DefaultPawnClass = PlayerPawnClassFinder.Class;
 }
 
-void AAnomalyGameMode::IncrementClearedAnomalies()
-{
-	++GI->ClearedAnomalies;
-}
-
-int AAnomalyGameMode::GetClearedAnomalies()
-{
-	return GI->ClearedAnomalies;
-}
-
 void AAnomalyGameMode::RegisterSpawner(AAnomalySpawner* InSpawner)
 {
 	Spawner = InSpawner;
@@ -38,7 +28,6 @@ void AAnomalyGameMode::BeginPlay()
 	CVar->Set(165);
 	CVar = IConsoleManager::Get().FindConsoleVariable(TEXT("r.VSync"));
 	CVar->Set(1);
-
 }
 
 void AAnomalyGameMode::Win()

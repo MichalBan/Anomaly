@@ -6,9 +6,14 @@
 #include "AnomalyActor.h"
 #include "AnomalyDoor.generated.h"
 
-/**
- * 
- */
+enum class EDoorState : uint8
+{
+	Closed,
+	Opening,
+	Open,
+	Closing
+};
+
 UCLASS()
 class ANOMALY_API AAnomalyDoor : public AAnomalyActor
 {
@@ -34,10 +39,8 @@ private:
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void NativeClear() override;
 	void OpenDoor();
-	void CloseDoor();
 
 	float DoorYaw = 0.0f;
-	bool bOpening = false;
-	bool bClosing = false;
+	EDoorState DoorState = EDoorState::Closed;
 	const float DoorSpeed = 30.0f;
 };

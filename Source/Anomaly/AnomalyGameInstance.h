@@ -38,15 +38,17 @@ public:
 	void ResetGame();
 	void EndGame();
 
+	bool bGameEnded = false;
 	FAnomalyData AnomalyData;
 	float Sanity = 1.0f;
 	FTimerHandle GameTimer;
 	int TimeLeft = 0;
+	int SpawnedAnomalies = 0;
 	int ClearedAnomalies = 0;
 	UPROPERTY(BlueprintReadWrite)
 	USoundBase* BeginPlaySound;
 	UPROPERTY(BlueprintReadWrite)
-	int GameTime = 170;
+	int GameTime = 120;
 
 private:
 	void OnGameTimer();
